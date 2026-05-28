@@ -12,12 +12,5 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  nitro: {
-    preset: "netlify",
-    output: {
-      dir: ".netlify",
-      serverDir: ".netlify/server",
-      publicDir: "dist/client",
-    },
-  },
+  nitro: true,
 });
