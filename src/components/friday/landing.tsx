@@ -890,8 +890,11 @@ export function FridayLanding() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const triggerDownload = () => {
+    // Use GitHub Releases URL from .env — falls back to public/ folder for local dev
+    const href = import.meta.env.VITE_DOWNLOAD_URL || "/FRIDAY-AI-1.2.6-Setup.exe";
+
     const link = document.createElement("a");
-    link.href = "/FRIDAY-AI-1.2.6-Setup.exe";
+    link.href = href;
     link.download = "FRIDAY-AI-1.2.6-Setup.exe";
     document.body.appendChild(link);
     link.click();

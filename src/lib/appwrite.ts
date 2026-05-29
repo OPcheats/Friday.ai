@@ -1,0 +1,17 @@
+import { Client, Account, Databases } from "appwrite";
+
+const APPWRITE_ENDPOINT = import.meta.env.VITE_APPWRITE_ENDPOINT || "";
+const APPWRITE_PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID || "";
+
+if (!APPWRITE_ENDPOINT || !APPWRITE_PROJECT_ID) {
+  console.warn(
+    "Appwrite credentials missing! Please configure VITE_APPWRITE_ENDPOINT and VITE_APPWRITE_PROJECT_ID in your .env file."
+  );
+}
+
+const client = new Client()
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT_ID);
+
+export const account = new Account(client);
+export const databases = new Databases(client);

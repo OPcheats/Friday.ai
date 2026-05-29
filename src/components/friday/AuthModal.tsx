@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { ID } from "appwrite";
+import { account, databases } from "@/lib/appwrite";
 import { Download, X, Mail, User, Lock, CircleDot, Eye, EyeOff, CheckCircle2, Loader2 } from "lucide-react";
+
+const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || "";
+const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID || "";
 
 type Mode = "signup" | "login";
 
@@ -29,6 +33,22 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
     setSuccess("");
   };
 
+  /** Store user profile document in Appwrite Database */
+  const upsertProfile = async (userId: string, userEmail: string, name: string) => {
+    if (!DATABASE_ID || !COLLECTION_ID) return;
+    try {
+      await databases.createDocument(DATABASE_ID, COLLECTION_ID, ID.unique(), {
+        userId,
+        email: userEmail,
+        username: name,
+        downloadedAt: new Date().toISOString(),
+      });
+    } catch {
+      // Non-fatal — profile record failure should not block the download
+      console.warn("Could not save profile document to Appwrite Database.");
+    }
+  };
+
   const handleSignUp = async () => {
     if (!email || !username || !password) {
       setError("Please fill in all fields.");
@@ -38,8 +58,8 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
       setError("Username must be at least 3 characters.");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
       return;
     }
 
@@ -47,31 +67,20 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
     setError("");
 
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username },
-        },
-      });
+      // 1. Create the Appwrite account
+      const user = await account.create(ID.unique(), email, password, username);
 
-      if (signUpError) throw signUpError;
+      // 2. Start a session (log the user in immediately)
+      await account.createEmailPasswordSession(email, password);
 
-      // Insert into profiles table
-      if (data.user) {
-        await supabase.from("profiles").upsert({
-          id: data.user.id,
-          email: data.user.email,
-          username,
-          downloaded_at: new Date().toISOString(),
-        });
-      }
+      // 3. Record the download in the database
+      await upsertProfile(user.$id, email, username);
 
-      setSuccess("Account created! Check your email to confirm, then your download will start.");
+      setSuccess("Account created! Your download is starting…");
       setTimeout(() => {
         onAuthSuccess();
         onClose();
-      }, 2000);
+      }, 1500);
     } catch (err: any) {
       setError(err.message || "Sign up failed. Please try again.");
     } finally {
@@ -89,19 +98,14 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
     setError("");
 
     try {
-      const { data, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+      // 1. Create a session
+      await account.createEmailPasswordSession(email, password);
 
-      if (loginError) throw loginError;
+      // 2. Get the logged-in user
+      const user = await account.get();
 
-      // Record download
-      if (data.user) {
-        await supabase.from("profiles").upsert({
-          id: data.user.id,
-          email: data.user.email,
-          username: data.user.user_metadata?.username ?? email.split("@")[0],
-          downloaded_at: new Date().toISOString(),
-        });
-      }
+      // 3. Record the download
+      await upsertProfile(user.$id, user.email, user.name || email.split("@")[0]);
 
       setSuccess("Logged in! Your download is starting…");
       setTimeout(() => {
@@ -232,7 +236,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
                   autoComplete={mode === "signup" ? "new-password" : "current-password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={mode === "signup" ? "Min. 6 characters" : "••••••••"}
+                  placeholder={mode === "signup" ? "Min. 8 characters" : "••••••••"}
                   className="w-full rounded-lg border border-border bg-[oklch(0.15_0.005_270)] pl-9 pr-10 py-2.5 text-sm outline-none focus:border-crimson/50 focus:ring-1 focus:ring-crimson/20 placeholder:text-muted-foreground/50 transition-colors"
                 />
                 <button
@@ -288,7 +292,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
             </p>
 
             <p className="text-center text-[10px] text-muted-foreground/60">
-              🔒 We only store your email and username. Your data never leaves Supabase.
+              🔒 We only store your email and username. Your data is secured by Appwrite.
             </p>
           </form>
         </div>
