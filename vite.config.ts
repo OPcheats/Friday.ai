@@ -12,5 +12,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  nitro: true,
+  // Use the Netlify preset so Nitro outputs to .netlify/server/ instead of
+  // dist/server/ (cloudflare-module). This is required for Netlify Functions to
+  // pick up the SSR handler and serve the app without a 404.
+  nitro: {
+    preset: "netlify",
+  },
 });
