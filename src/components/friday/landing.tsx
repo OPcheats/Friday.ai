@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RELEASE } from "@/config/release";
 import { Link } from "@tanstack/react-router";
 import {
   Mic, Zap, Eye, Brain, Code2, Keyboard, Smartphone, Workflow, Sparkles,
@@ -886,17 +887,14 @@ function Footer() {
   );
 }
 
+
 export function FridayLanding() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const triggerDownload = () => {
-    // Hardcoded to always serve the latest release — do NOT use env var here
-    // as Netlify dashboard may have a stale VITE_DOWNLOAD_URL from a prior version.
-    const DOWNLOAD_URL = "https://github.com/OPcheats/friday-ai-releases/releases/download/v1.2.7/FRIDAY-AI-1.2.7-Setup.exe";
-
     const link = document.createElement("a");
-    link.href = DOWNLOAD_URL;
-    link.download = "FRIDAY-AI-1.2.7-Setup.exe";
+    link.href = RELEASE.downloadUrl;
+    link.download = RELEASE.fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

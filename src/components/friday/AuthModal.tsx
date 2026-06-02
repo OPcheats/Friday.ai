@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ID } from "appwrite";
 import { account, databases } from "@/lib/appwrite";
+import { RELEASE } from "@/config/release";
 import { Download, X, Mail, User, Lock, CircleDot, Eye, EyeOff, CheckCircle2, Loader2 } from "lucide-react";
 
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || "";
@@ -53,7 +54,7 @@ interface AuthModalProps {
   fileName?: string;
 }
 
-export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-AI-1.2.7-Setup.exe" }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = RELEASE.fileName }: AuthModalProps) {
   const [mode, setMode] = useState<Mode>("signup");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -212,7 +213,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
               </div>
               <div>
                 <div className="font-semibold tracking-[0.12em] text-sm">F.R.I.D.A.Y</div>
-                <div className="text-[10px] font-mono text-muted-foreground">v1.2.7 · Secure Download</div>
+                <div className="text-[10px] font-mono text-muted-foreground">v{RELEASE.version} · Secure Download</div>
               </div>
             </div>
 
