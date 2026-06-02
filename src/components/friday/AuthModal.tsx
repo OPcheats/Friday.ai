@@ -67,6 +67,13 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
     setError("");
 
     try {
+      // Delete existing session if any to prevent Appwrite "session already active" error
+      try {
+        await account.deleteSession("current");
+      } catch {
+        // No active session, safe to ignore
+      }
+
       // 1. Create the Appwrite account
       const user = await account.create(ID.unique(), email, password, username);
 
@@ -98,6 +105,13 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
     setError("");
 
     try {
+      // Delete existing session if any to prevent Appwrite "session already active" error
+      try {
+        await account.deleteSession("current");
+      } catch {
+        // No active session, safe to ignore
+      }
+
       // 1. Create a session
       await account.createEmailPasswordSession(email, password);
 
