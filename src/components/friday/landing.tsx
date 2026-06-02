@@ -891,7 +891,7 @@ export function FridayLanding() {
 
   const triggerDownload = () => {
     // Use GitHub Releases URL from .env — falls back to public/ folder for local dev
-    const href = import.meta.env.VITE_DOWNLOAD_URL || "/FRIDAY-AI-1.2.7-Setup.exe";
+    const href = import.meta.env.VITE_DOWNLOAD_URL || "https://github.com/OPcheats/friday-ai-releases/releases/download/v1.2.7/FRIDAY-AI-1.2.7-Setup.exe";
 
     const link = document.createElement("a");
     link.href = href;
