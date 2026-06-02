@@ -646,8 +646,8 @@ function HowToInstall({ onDownload }: { onDownload: () => void }) {
                   <Download className="h-5 w-5 text-crimson-glow" />
                 </div>
                 <div>
-                  <div className="font-semibold text-lg tracking-tight">F.R.I.D.A.Y Desktop · v1.2.6</div>
-                  <div className="text-xs text-muted-foreground font-mono">Stable release · May 2026</div>
+                  <div className="font-semibold text-lg tracking-tight">F.R.I.D.A.Y Desktop · v1.2.7</div>
+                  <div className="text-xs text-muted-foreground font-mono">Stable release · June 2026</div>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -891,11 +891,11 @@ export function FridayLanding() {
 
   const triggerDownload = () => {
     // Use GitHub Releases URL from .env — falls back to public/ folder for local dev
-    const href = import.meta.env.VITE_DOWNLOAD_URL || "/FRIDAY-AI-1.2.6-Setup.exe";
+    const href = import.meta.env.VITE_DOWNLOAD_URL || "/FRIDAY-AI-1.2.7-Setup.exe";
 
     const link = document.createElement("a");
     link.href = href;
-    link.download = "FRIDAY-AI-1.2.6-Setup.exe";
+    link.download = "FRIDAY-AI-1.2.7-Setup.exe";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -16,7 +16,7 @@ interface AuthModalProps {
   fileName?: string;
 }
 
-export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-AI-1.2.6-Setup.exe" }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-AI-1.2.7-Setup.exe" }: AuthModalProps) {
   const [mode, setMode] = useState<Mode>("signup");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -156,7 +156,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
               </div>
               <div>
                 <div className="font-semibold tracking-[0.12em] text-sm">F.R.I.D.A.Y</div>
-                <div className="text-[10px] font-mono text-muted-foreground">v1.2.6 · Secure Download</div>
+                <div className="text-[10px] font-mono text-muted-foreground">v1.2.7 · Secure Download</div>
               </div>
             </div>
 

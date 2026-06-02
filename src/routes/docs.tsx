@@ -86,7 +86,7 @@ function DocsPage() {
             </p>
             <div className="grid sm:grid-cols-3 gap-3">
               {[
-                { os: "Windows", ext: ".exe", file: "/FRIDAY-AI-1.2.6-Setup.exe", color: "text-cyan-sys border-cyan-sys/30 bg-cyan-sys/5" },
+                { os: "Windows", ext: ".exe", file: "https://github.com/OPcheats/friday-ai-releases/releases/download/v1.2.7/FRIDAY-AI-1.2.7-Setup.exe", color: "text-cyan-sys border-cyan-sys/30 bg-cyan-sys/5" },
                 { os: "macOS", ext: ".dmg", file: "#", color: "text-muted-foreground border-border bg-[oklch(0.15_0.005_270)]" },
                 { os: "Linux", ext: ".AppImage", file: "#", color: "text-muted-foreground border-border bg-[oklch(0.15_0.005_270)]" },
               ].map((p) => (
