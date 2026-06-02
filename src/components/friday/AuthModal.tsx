@@ -6,6 +6,43 @@ import { Download, X, Mail, User, Lock, CircleDot, Eye, EyeOff, CheckCircle2, Lo
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || "";
 const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID || "";
 
+// Warn in dev if the collection ID looks like a name (not an Appwrite ID)
+if (COLLECTION_ID && !/^[a-zA-Z0-9_-]{1,36}$/.test(COLLECTION_ID)) {
+  console.warn(
+    `[AuthModal] VITE_APPWRITE_COLLECTION_ID looks invalid: "${COLLECTION_ID}". ` +
+    "It should be the Collection ID from the Appwrite Console (e.g. 6a19b96...), not the collection name."
+  );
+}
+
+/** Maps known Appwrite error codes/messages to user-friendly strings */
+function friendlyAuthError(err: any, mode: Mode): string {
+  const msg: string = err?.message || "";
+  const code: number = err?.code || 0;
+
+  // User already exists
+  if (code === 409 || msg.toLowerCase().includes("already exists")) {
+    return "An account with this email already exists. Please sign in instead.";
+  }
+  // Invalid credentials
+  if (code === 401 || msg.toLowerCase().includes("invalid credentials")) {
+    return "Incorrect email or password. Please try again.";
+  }
+  // Rate limit
+  if (code === 429) {
+    return "Too many attempts. Please wait a moment and try again.";
+  }
+  // Network / endpoint
+  if (msg.toLowerCase().includes("failed to fetch") || msg.toLowerCase().includes("networkerror")) {
+    return "Network error — please check your connection and try again.";
+  }
+  // Session conflict
+  if (msg.toLowerCase().includes("session") && msg.toLowerCase().includes("active")) {
+    return "A session is already active. Please refresh the page and try again.";
+  }
+
+  return msg || (mode === "signup" ? "Sign up failed. Please try again." : "Login failed. Please try again.");
+}
+
 type Mode = "signup" | "login";
 
 interface AuthModalProps {
@@ -89,7 +126,12 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
         onClose();
       }, 1500);
     } catch (err: any) {
-      setError(err.message || "Sign up failed. Please try again.");
+      const msg = friendlyAuthError(err, "signup");
+      setError(msg);
+      // If email already exists, auto-switch to login tab
+      if ((err?.code === 409 || (err?.message || "").toLowerCase().includes("already exists"))) {
+        setTimeout(() => setMode("login"), 1800);
+      }
     } finally {
       setLoading(false);
     }
@@ -127,7 +169,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, fileName = "FRIDAY-A
         onClose();
       }, 1200);
     } catch (err: any) {
-      setError(err.message || "Login failed. Please try again.");
+      setError(friendlyAuthError(err, "login"));
     } finally {
       setLoading(false);
     }
