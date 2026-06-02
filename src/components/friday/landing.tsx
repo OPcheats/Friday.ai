@@ -890,11 +890,12 @@ export function FridayLanding() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const triggerDownload = () => {
-    // Use GitHub Releases URL from .env — falls back to public/ folder for local dev
-    const href = import.meta.env.VITE_DOWNLOAD_URL || "https://github.com/OPcheats/friday-ai-releases/releases/download/v1.2.7/FRIDAY-AI-1.2.7-Setup.exe";
+    // Hardcoded to always serve the latest release — do NOT use env var here
+    // as Netlify dashboard may have a stale VITE_DOWNLOAD_URL from a prior version.
+    const DOWNLOAD_URL = "https://github.com/OPcheats/friday-ai-releases/releases/download/v1.2.7/FRIDAY-AI-1.2.7-Setup.exe";
 
     const link = document.createElement("a");
-    link.href = href;
+    link.href = DOWNLOAD_URL;
     link.download = "FRIDAY-AI-1.2.7-Setup.exe";
     document.body.appendChild(link);
     link.click();
