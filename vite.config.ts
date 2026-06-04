@@ -17,7 +17,10 @@ export default defineConfig({
     preset: "vercel",
     output: {
       dir: ".vercel/output",
-      serverDir: ".vercel/output/functions",
+      // Nitro's config.json routes all requests to /__server
+      // Vercel maps functions/__server.func/ → /__server endpoint
+      // Without the __server.func suffix, the function lands at / and never matches
+      serverDir: ".vercel/output/functions/__server.func",
       publicDir: ".vercel/output/static",
     },
   },
