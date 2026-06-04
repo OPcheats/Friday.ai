@@ -12,18 +12,13 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Use the Netlify preset so Nitro outputs a Netlify Functions-compatible handler.
-  //
-  // IMPORTANT: @lovable.dev/vite-tanstack-config hardcodes output.serverDir = "dist/server"
-  // regardless of preset. We must explicitly override output here so the function
-  // lands in .netlify/server/ — the directory our netlify.toml [functions] block points to.
-  // The spread `...userNitroOpts.output` in the lovable config means our output wins.
+  // Use the Vercel preset so Nitro outputs a Vercel-compatible handler.
   nitro: {
-    preset: "netlify",
+    preset: "vercel",
     output: {
-      dir: ".netlify",
-      serverDir: ".netlify/server",
-      publicDir: "dist/client",
+      dir: ".vercel/output",
+      serverDir: ".vercel/output/functions",
+      publicDir: ".vercel/output/static",
     },
   },
 });
